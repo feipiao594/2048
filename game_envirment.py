@@ -39,7 +39,7 @@ class game_envirment:
                 new_row.append(non_zero_tiles[i] * 2)
                 i += 2
             else:
-                if(non_zero_tiles[i] == 2048):
+                if(non_zero_tiles[i] >= 2048):
                     self.success = True
                 new_row.append(non_zero_tiles[i])
                 i += 1

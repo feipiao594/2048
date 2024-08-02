@@ -3,9 +3,12 @@ import pygame
 
 # from agent import Agent
 from tools import display_data
+from agent import ai
 
 running = True
+player_ai = True
 pygame.init()
+ai_agent = ai.QLearningAgent()
 WINDOW_SIZE = (display_data.GRID_SIZE * display_data.CELL_SIZE + (display_data.GRID_SIZE+ 1) * display_data.MARGIN, display_data.GRID_SIZE * display_data.CELL_SIZE +(display_data.GRID_SIZE + 1) * display_data.MARGIN)
 screen = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption("2048 Game")
@@ -16,7 +19,6 @@ def restart_game():
     global game_env
     game_env.reset()
     running = True
-    cycle(game_env)
 
 def success_window():
     # 游戏胜利窗口
@@ -91,17 +93,25 @@ def fail_window():
 
 def cycle(game_env):
     # 游戏主循环
-    global running
+    global running, ai_agent
     while running:
         # 处理事件
-        
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
-                    game_env.move(event.key)
-                    game_env.check_can_move()
+        if(player_ai == True):
+            action = ai_agent.get_action(game_env)
+            if action != None:
+                game_env.move(action)
+                game_env.check_can_move()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+        else:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
+                        game_env.move(event.key)
+                        game_env.check_can_move()
         # 清空屏幕
         screen.fill(display_data.DARK_GRAY)
         # 绘制游戏板
@@ -114,7 +124,7 @@ def cycle(game_env):
                 pygame.draw.rect(screen, display_data.TILE_COLORS[game_env.board[row, col]], (x, y, display_data.CELL_SIZE, display_data.CELL_SIZE))
                 # 绘制格子中的数字（如果有）
                 if game_env.board[row, col] != 0:
-                    font = pygame.font.Font(None, 80)
+                    font = pygame.font.Font(None, 65)
                     text = font.render(str(game_env.board[row, col]), True, display_data.NUMBER_BROWN)
                     text_rect = text.get_rect(center=(x + display_data.CELL_SIZE / 2, y + display_data.CELL_SIZE / 2))
                     screen.blit(text, text_rect)
@@ -129,3 +139,4 @@ def cycle(game_env):
             
 if __name__ == "__main__":
     restart_game()
+    cycle(game_env)
