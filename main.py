@@ -1,7 +1,7 @@
 import game_envirment
 import pygame
 
-from agent import Agent
+# from agent import Agent
 from tools import display_data
 
 running = True
