@@ -1,7 +1,7 @@
+import time
 import game_envirment
 import pygame
 
-# from agent import Agent
 from tools import display_data
 from agent import ai
 
@@ -15,10 +15,11 @@ pygame.display.set_caption("2048 Game")
 game_env = game_envirment.game_envirment()
 
 def restart_game():
-    global running
+    global running, ai_agent
     global game_env
     game_env.reset()
     running = True
+    ai_agent.reset()
 
 def success_window():
     # 游戏胜利窗口
@@ -42,6 +43,11 @@ def success_window():
     screen.blit(button_text, button_rect)
     
     pygame.display.flip()
+    
+    if player_ai:
+        time.sleep(1)
+        restart_game()
+        return
     
     # 处理事件
     while True:
@@ -77,6 +83,11 @@ def fail_window():
     screen.blit(button_text, button_rect)
     
     pygame.display.flip()
+    
+    if player_ai:
+        time.sleep(1)
+        restart_game()
+        return
     
     # 处理事件
     while True:
@@ -135,6 +146,9 @@ def cycle(game_env):
             success_window()
         elif game_env.fail:
             running = False
+            reward = ai_agent.reward(game_env)
+            ai_agent.reward_sum += reward
+            ai_agent.update(reward, game_env)
             fail_window()
             
 if __name__ == "__main__":

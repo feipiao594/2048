@@ -11,6 +11,7 @@ class game_envirment:
         self.add_random_tile()
         self.success = False
         self.fail = False
+        self.score = 0
     
     def reset(self):
         self.board = np.zeros((display_data.GRID_SIZE, display_data.GRID_SIZE), dtype=int)
@@ -18,6 +19,7 @@ class game_envirment:
         self.add_random_tile()
         self.success = False
         self.fail = False
+        self.score = 0
     
     # 添加随机方块
     def add_random_tile(self):
@@ -26,7 +28,7 @@ class game_envirment:
         if empty_cells:
             # 在随机位置生成一个2或者4
             row, col = random.choice(empty_cells)
-            self.board[row, col] = random.choice([2 ,2 ,2 ,2 ,4]) # 2的概率是80%，4的概率是20%
+            self.board[row, col] = random.choice([2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,4]) # 2的概率是80%，4的概率是20%
     
     # 处理移动和合并逻辑
     def slide(self, row):
@@ -37,6 +39,7 @@ class game_envirment:
         while i < len(non_zero_tiles):
             if i + 1 < len(non_zero_tiles) and non_zero_tiles[i] == non_zero_tiles[i + 1]:
                 new_row.append(non_zero_tiles[i] * 2)
+                self.score += non_zero_tiles[i] * 2
                 i += 2
             else:
                 if(non_zero_tiles[i] >= 2048):
@@ -48,7 +51,7 @@ class game_envirment:
         return new_row
     
     def move(self, direction):
-        board_changed = []
+        board_changed = None
         if direction == pygame.K_LEFT:
             board_changed = np.array([self.slide(row) for row in self.board])
         elif direction == pygame.K_RIGHT:
