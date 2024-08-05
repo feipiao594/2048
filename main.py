@@ -139,6 +139,13 @@ def cycle(game_env):
                     text = font.render(str(game_env.board[row, col]), True, display_data.NUMBER_BROWN)
                     text_rect = text.get_rect(center=(x + display_data.CELL_SIZE / 2, y + display_data.CELL_SIZE / 2))
                     screen.blit(text, text_rect)
+        # 绘制分数
+        font = pygame.font.Font(None, 50)
+        text = font.render("Score: " + str(game_env.score), True, display_data.WHITE)
+        # 分数显示在屏幕右上角, 和游戏板区分开
+        text_rect = text.get_rect(topright=(WINDOW_SIZE[0] - display_data.MARGIN, display_data.MARGIN))
+        screen.blit(text, text_rect)
+
         # 更新屏幕显示True
         pygame.display.flip()
         if game_env.success:
